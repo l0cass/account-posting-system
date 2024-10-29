@@ -31,7 +31,9 @@ export class PostService {
       if (!posts.length) throw new NotFoundException("Posts don't exist");
 
       return { status: HttpStatus.OK, data: posts };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }
@@ -48,7 +50,9 @@ export class PostService {
       if (!post) throw new NotFoundException("Post doesn't exist");
 
       return { status: HttpStatus.OK, data: post };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }
@@ -65,7 +69,9 @@ export class PostService {
       if (!user.posts) throw new NotFoundException("Posts don't exist");
 
       return { status: HttpStatus.OK, data: user.posts };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }
@@ -85,7 +91,9 @@ export class PostService {
       await this.postRepository.save(newPost);
 
       return { status: HttpStatus.CREATED, message: 'Post created' };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }
@@ -104,7 +112,9 @@ export class PostService {
       await this.postRepository.save(post);
 
       return { status: HttpStatus.OK, message: 'Post updated' };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }
@@ -120,7 +130,9 @@ export class PostService {
       await this.postRepository.remove(post);
 
       return { status: HttpStatus.OK, message: 'Post deleted' };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }

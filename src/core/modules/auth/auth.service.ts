@@ -24,32 +24,6 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async signIn(body: UpdateUserDto) {
-    try {
-      const user = await this.userRepository.findOneBy({ email: body.email });
-
-      if (!user) throw new NotFoundException('Bad credentials');
-
-      const passwordsMatch = bcrypt.compare(user.password, body.password);
-
-      if (!passwordsMatch) throw new UnauthorizedException('Bad credentials');
-
-      return {
-        status: HttpStatus.OK,
-        accessToken: await this.jwtService.signAsync({
-          expiresIn: '7d',
-          sub: user.id,
-          role: user.role,
-          name: user.name,
-          issuer: 'auth/access',
-        }),
-      };
-    } catch (error) {
-      console.error((error as Error).message);
-      throw new InternalServerErrorException();
-    }
-  }
-
   async signUp(body: CreateUserDto) {
     try {
       const salts = await bcrypt.genSalt(10);
@@ -70,6 +44,36 @@ export class AuthService {
         throw new ConflictException('Email is already in use');
 
       console.error(error);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async signIn(body: Omit<CreateUserDto, 'username' | 'name'>) {
+    try {
+      const user = await this.userRepository.findOneBy({ email: body.email });
+
+      if (!user) throw new NotFoundException('Bad credentials');
+
+      const passwordsMatch = await bcrypt.compare(user.password, body.password);
+
+      if (!passwordsMatch) throw new UnauthorizedException('Bad credentials');
+
+      return {
+        status: HttpStatus.OK,
+        accessToken: await this.jwtService.signAsync({
+          expiresIn: '7d',
+          sub: user.id,
+          role: user.role,
+          name: user.name,
+          issuer: 'auth/access',
+        }),
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
+      if (error instanceof UnauthorizedException) throw error;
+
+      console.error((error as Error).message);
       throw new InternalServerErrorException();
     }
   }

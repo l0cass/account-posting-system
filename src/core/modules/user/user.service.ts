@@ -32,7 +32,9 @@ export class UserService {
       if (!users.length) throw new NotFoundException("Users don't exist");
 
       return { status: HttpStatus.OK, data: users };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }
@@ -54,7 +56,9 @@ export class UserService {
       if (!user) throw new NotFoundException("User doesn't exist");
 
       return { status: HttpStatus.OK, data: user };
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+
       throw new InternalServerErrorException();
     }
   }
