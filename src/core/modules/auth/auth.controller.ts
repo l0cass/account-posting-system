@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 
@@ -10,7 +10,7 @@ import { IsPublic } from './decorators';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('sign-in')
+  @Post('sign-in')
   signIn(@Body() body: UpdateUserDto) {
     return this.authService.signIn(body);
   }
