@@ -54,7 +54,7 @@ export class AuthService {
 
       if (!user) throw new NotFoundException('Bad credentials');
 
-      const passwordsMatch = await bcrypt.compare(user.password, body.password);
+      const passwordsMatch = await bcrypt.compare(body.password, user.password);
 
       if (!passwordsMatch) throw new UnauthorizedException('Bad credentials');
 
