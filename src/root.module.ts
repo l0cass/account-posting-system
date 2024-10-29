@@ -18,7 +18,7 @@ import { AuthGuard } from './core/modules/auth/guard';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.development.local',
+      envFilePath: '.env',
     }),
     ThrottlerModule.forRoot([{ ttl: 60, limit: 100 }]),
 
@@ -37,8 +37,12 @@ import { AuthGuard } from './core/modules/auth/guard';
       useFactory: (configService: ConfigService) => ({
         entities: [UserEntity, PostEntity],
 
-        type: 'sqlite',
-        database: configService.get<string>('DATABASE_PATH'),
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
 
         logging: true,
         synchronize: configService.get<string>('NODE_ENV') === 'development',

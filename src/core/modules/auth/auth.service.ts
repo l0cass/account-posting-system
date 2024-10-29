@@ -66,7 +66,7 @@ export class AuthService {
 
       return { status: HttpStatus.CREATED, message: 'User created' };
     } catch (error) {
-      if (error.code === 'SQLITE_CONSTRAINT')
+      if (error.code === '23505')
         throw new ConflictException('Email is already in use');
 
       console.error(error);
